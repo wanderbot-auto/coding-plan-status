@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build-dmg:
@@ -47,3 +47,19 @@ jobs:
           name: coding-plan-status-app-${{ github.run_number }}
           path: dist/*.app
           if-no-files-found: error
+
+      - name: Package app zip for release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          APP_PATH="$(ls dist/*.app | head -n 1)"
+          APP_BASE="$(basename "${APP_PATH}" .app)"
+          ditto -c -k --sequesterRsrc --keepParent "${APP_PATH}" "dist/${APP_BASE}.zip"
+
+      - name: Publish release assets
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.dmg
+            dist/*.zip
+          fail_on_unmatched_files: true
