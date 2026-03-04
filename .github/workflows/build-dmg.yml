@@ -1,0 +1,49 @@
+name: Build DMG
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-dmg:
+    runs-on: macos-14
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Swift version
+        run: swift --version
+
+      - name: Run tests
+        run: swift test
+
+      - name: Build app and DMG
+        run: |
+          chmod +x scripts/build_app.sh
+          scripts/build_app.sh
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coding-plan-status-dmg-${{ github.run_number }}
+          path: dist/*.dmg
+          if-no-files-found: error
+
+      - name: Upload app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coding-plan-status-app-${{ github.run_number }}
+          path: dist/*.app
+          if-no-files-found: error
