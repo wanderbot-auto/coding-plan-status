@@ -6,10 +6,13 @@ BUNDLE_ID="com.wander.codingplanstatus"
 VERSION="1.0.0"
 BUILD_NUMBER="1"
 MIN_MACOS="14.0"
+DMG_VOLUME_NAME="${APP_NAME}"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DIST_DIR="${ROOT_DIR}/dist"
 APP_DIR="${DIST_DIR}/${APP_NAME}.app"
+DMG_STAGING_DIR="${DIST_DIR}/.dmg-staging"
+DMG_PATH="${DIST_DIR}/${APP_NAME}-${VERSION}.dmg"
 CONTENTS_DIR="${APP_DIR}/Contents"
 MACOS_DIR="${CONTENTS_DIR}/MacOS"
 RESOURCES_DIR="${CONTENTS_DIR}/Resources"
@@ -18,6 +21,7 @@ APP_ICON_SOURCE="${ROOT_DIR}/assets/AppIcon.icns"
 BUILD_CONFIG="release"
 OPEN_AFTER_BUILD="0"
 NO_SIGN="0"
+BUILD_DMG="1"
 
 usage() {
   cat <<USAGE
@@ -27,6 +31,7 @@ Options:
   --debug         Build debug instead of release
   --open          Open app after build
   --no-sign       Skip ad-hoc codesign
+  --no-dmg        Skip DMG packaging
   -h, --help      Show help
 USAGE
 }
@@ -43,6 +48,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --no-sign)
       NO_SIGN="1"
+      shift
+      ;;
+    --no-dmg)
+      BUILD_DMG="0"
       shift
       ;;
     -h|--help)
@@ -69,6 +78,10 @@ fi
 if [[ ! -f "${APP_ICON_SOURCE}" ]]; then
   echo "App icon not found: ${APP_ICON_SOURCE}" >&2
   exit 1
+fi
+
+if [[ "${BUILD_CONFIG}" == "debug" ]]; then
+  DMG_PATH="${DIST_DIR}/${APP_NAME}-${VERSION}-debug.dmg"
 fi
 
 echo "[2/5] Preparing app bundle..."
@@ -105,7 +118,26 @@ else
   echo "[4/5] Skipping codesign (--no-sign)."
 fi
 
-echo "[5/5] Done: ${APP_DIR}"
+if [[ "${BUILD_DMG}" == "1" ]]; then
+  echo "[5/6] Packaging DMG..."
+  rm -rf "${DMG_STAGING_DIR}"
+  mkdir -p "${DMG_STAGING_DIR}"
+  cp -R "${APP_DIR}" "${DMG_STAGING_DIR}/${APP_NAME}.app"
+  ln -sfn /Applications "${DMG_STAGING_DIR}/Applications"
+  rm -f "${DMG_PATH}"
+  hdiutil create \
+    -volname "${DMG_VOLUME_NAME}" \
+    -srcfolder "${DMG_STAGING_DIR}" \
+    -ov \
+    -format UDZO \
+    "${DMG_PATH}"
+  rm -rf "${DMG_STAGING_DIR}"
+  echo "[6/6] Done:"
+  echo "  App: ${APP_DIR}"
+  echo "  DMG: ${DMG_PATH}"
+else
+  echo "[5/5] Done: ${APP_DIR}"
+fi
 
 if [[ "${OPEN_AFTER_BUILD}" == "1" ]]; then
   echo "Opening app..."
