@@ -13,6 +13,7 @@ APP_DIR="${DIST_DIR}/${APP_NAME}.app"
 CONTENTS_DIR="${APP_DIR}/Contents"
 MACOS_DIR="${CONTENTS_DIR}/MacOS"
 RESOURCES_DIR="${CONTENTS_DIR}/Resources"
+APP_ICON_SOURCE="${ROOT_DIR}/assets/AppIcon.icns"
 
 BUILD_CONFIG="release"
 OPEN_AFTER_BUILD="0"
@@ -65,12 +66,17 @@ if [[ ! -f "${BIN_PATH}" ]]; then
   echo "Build output not found: ${BIN_PATH}" >&2
   exit 1
 fi
+if [[ ! -f "${APP_ICON_SOURCE}" ]]; then
+  echo "App icon not found: ${APP_ICON_SOURCE}" >&2
+  exit 1
+fi
 
 echo "[2/5] Preparing app bundle..."
 rm -rf "${APP_DIR}"
 mkdir -p "${MACOS_DIR}" "${RESOURCES_DIR}"
 cp "${BIN_PATH}" "${MACOS_DIR}/${APP_NAME}"
 chmod +x "${MACOS_DIR}/${APP_NAME}"
+cp "${APP_ICON_SOURCE}" "${RESOURCES_DIR}/AppIcon.icns"
 
 echo "[3/5] Writing Info.plist..."
 cat > "${CONTENTS_DIR}/Info.plist" <<PLIST
@@ -85,6 +91,7 @@ cat > "${CONTENTS_DIR}/Info.plist" <<PLIST
   <key>CFBundleShortVersionString</key><string>${VERSION}</string>
   <key>CFBundleExecutable</key><string>${APP_NAME}</string>
   <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>LSMinimumSystemVersion</key><string>${MIN_MACOS}</string>
   <key>LSUIElement</key><true/>
 </dict>

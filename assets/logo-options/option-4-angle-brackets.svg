@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">Coding Plan Status Logo Option 4</title>
+  <desc id="desc">Minimal light logo with code angle brackets and status dot.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F8FAFC" />
+      <stop offset="100%" stop-color="#EEF6FF" />
+    </linearGradient>
+  </defs>
+
+  <rect x="64" y="64" width="896" height="896" rx="220" fill="url(#bg)" />
+  <rect x="200" y="200" width="624" height="624" rx="156" fill="#FFFFFF" stroke="#DCE8F7" stroke-width="18" />
+
+  <g stroke="#2563EB" stroke-width="62" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M430 394 L312 512 L430 630" />
+    <path d="M592 394 L710 512 L592 630" />
+  </g>
+
+  <path d="M548 346 L476 678" stroke="#0EA5E9" stroke-width="42" stroke-linecap="round" />
+
+  <circle cx="800" cy="800" r="52" fill="#22C55E" stroke="#FFFFFF" stroke-width="12" />
+</svg>
