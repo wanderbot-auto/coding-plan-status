@@ -5,8 +5,8 @@
   <key>CFBundleName</key><string>CodingPlanStatusApp</string>
   <key>CFBundleDisplayName</key><string>CodingPlanStatusApp</string>
   <key>CFBundleIdentifier</key><string>com.wander.codingplanstatus</string>
-  <key>CFBundleVersion</key><string>1</string>
-  <key>CFBundleShortVersionString</key><string>1.0.0</string>
+  <key>CFBundleVersion</key><string>3</string>
+  <key>CFBundleShortVersionString</key><string>1.3</string>
   <key>CFBundleExecutable</key><string>CodingPlanStatusApp</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>

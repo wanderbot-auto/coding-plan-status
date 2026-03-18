@@ -3,8 +3,8 @@ set -euo pipefail
 
 APP_NAME="CodingPlanStatusApp"
 BUNDLE_ID="com.wander.codingplanstatus"
-VERSION="1.0.0"
-BUILD_NUMBER="1"
+VERSION="1.3"
+BUILD_NUMBER="3"
 MIN_MACOS="14.0"
 DMG_VOLUME_NAME="${APP_NAME}"
 
@@ -117,6 +117,12 @@ fi
 if [[ "${BUILD_CONFIG}" == "debug" ]]; then
   DMG_PATH="${DIST_DIR}/${APP_NAME}-${VERSION}-debug.dmg"
 fi
+
+for existing_dmg in "${DIST_DIR}/${APP_NAME}-"*.dmg; do
+  [[ -e "${existing_dmg}" ]] || continue
+  [[ "${existing_dmg}" == "${DMG_PATH}" ]] && continue
+  rm -f "${existing_dmg}"
+done
 
 echo "[2/5] Preparing app bundle..."
 rm -rf "${APP_DIR}"
